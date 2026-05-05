@@ -2,6 +2,9 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
+-- Optimization: changed `signal` to `constant` for sevenSegment_ROM.
+-- A signal infers a register array; a constant maps directly to
+-- distributed ROM in the LUT fabric — cheaper and faster.
 entity LUT_7_SEG is
     Port ( address : in STD_LOGIC_VECTOR (3 downto 0);
            data : out STD_LOGIC_VECTOR (6 downto 0));
@@ -9,7 +12,7 @@ end LUT_7_SEG;
 
 architecture Behavioral of LUT_7_SEG is
     type rom_type is array (0 to 15) of std_logic_vector(6 downto 0);
-        signal sevenSegment_ROM  : rom_type := (
+    constant sevenSegment_ROM  : rom_type := (
             "1000000", --0
             "1111001", --1
             "0100100", --2
