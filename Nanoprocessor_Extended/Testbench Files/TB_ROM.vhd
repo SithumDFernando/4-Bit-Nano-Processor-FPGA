@@ -13,7 +13,7 @@ architecture Behavioral of TB_ROM is
             Q : out std_logic_vector);
     end component;
     signal S : std_logic_vector(2 downto 0);
-    signal Q : std_logic_vector(11 downto 0);
+    signal Q : std_logic_vector(13 downto 0);
 
 begin
     uut: ROM port map(

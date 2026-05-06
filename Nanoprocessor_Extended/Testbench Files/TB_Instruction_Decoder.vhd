@@ -7,7 +7,7 @@ end TB_Instruction_Decoder;
 
 architecture Behavioral of TB_Instruction_Decoder is
     component Instruction_Decoder is
-        Port (  Inst : in std_logic_vector;
+        Port (  Inst : in std_logic_vector (13 downto 0);
 --                Clk : in std_logic;
                 Reg : in std_logic_vector;
                 LSB : out std_logic_vector;
@@ -18,7 +18,7 @@ architecture Behavioral of TB_Instruction_Decoder is
                 Sub : out std_logic;
                 JMP : out std_logic);
     end component;
-    signal Inst : std_logic_vector (11 downto 0);
+    signal Inst : std_logic_vector (13 downto 0);
     signal LD, Sub, JMP : std_logic; 
     signal Reg, LSB : std_logic_vector (3 downto 0);
     signal Mux_A, Mux_B, Reg_EN : std_logic_vector (2 downto 0);
@@ -39,19 +39,19 @@ begin
     begin
         wait for 5ns;
         Reg <= "0000";
-        Inst <= "100010000010";
+        Inst <= "00100010000010"; -- MOVI R1, 2
         wait for 80ns;
-        Inst <= "100100000001";
+        Inst <= "00100100000001"; -- MOVI R2, 1
         wait for 80ns;
-        Inst <= "010100000000";
+        Inst <= "00010100000000"; -- NEG R2
         wait for 80ns;
-        Inst <= "000010100000";
+        Inst <= "00000010100000"; -- ADD R1, R2
         wait for 80ns;
-        Inst <= "110010000111";
+        Inst <= "00110010000111"; -- JZR R1, 7
         wait for 80ns;
         Reg <= "0100";
         wait for 80ns;
-        Inst <= "111110000011";
+        Inst <= "01000010100000"; -- SUB R1, R2
         wait;
     end process;
 end Behavioral;
