@@ -1,26 +1,15 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
--- Full-system testbench for the optimised NANOPROCESSOR.
--- Program ROM computes 3+2+1 = 6 via a countdown loop → R7 = 6.
---
--- CLK_DIV_MAX => 4: fast clock 10 ns, slow_clk period = 2*4*10 = 80 ns.
--- Program completes in 14 slow_clk cycles ≈ 1160 ns; we wait 3000 ns.
+-- Full-system testbench.
+-- CLK_DIV_MAX => 4: slow_clk period = 2 * 4 * 10 ns = 80 ns.
+-- Program (3+2+1=6) completes in 14 slow_clk cycles ≈ 1120 ns.
+-- We wait 3000 ns then assert R7 = "0110".
 entity TB_Nanoprocessor is
 end TB_Nanoprocessor;
 
 architecture Behavioral of TB_Nanoprocessor is
-    component NANOPROCESSOR
-        generic (CLK_DIV_MAX : integer := 50_000_000);
-        port (Clr       : in  std_logic;
-              Clk       : in  std_logic;
-              R         : out std_logic_vector(3 downto 0);
-              Overflow  : out std_logic;
-              Zero      : out std_logic;
-              Seven_Seg : out std_logic_vector(6 downto 0);
-              AN        : out std_logic_vector(3 downto 0));
-    end component;
-
     signal Clr       : std_logic := '1';
     signal Clk       : std_logic := '0';
     signal R         : std_logic_vector(3 downto 0);
@@ -31,46 +20,40 @@ architecture Behavioral of TB_Nanoprocessor is
 
     constant CLK_PERIOD : time := 10 ns;
 begin
-    UUT : NANOPROCESSOR
+    UUT : entity work.NANOPROCESSOR
         generic map (CLK_DIV_MAX => 4)
-        port map (
-            Clr       => Clr,
-            Clk       => Clk,
-            R         => R,
-            Overflow  => Overflow,
-            Zero      => Zero,
-            Seven_Seg => Seven_Seg,
-            AN        => AN);
+        port map (Clr       => Clr,
+                  Clk       => Clk,
+                  R         => R,
+                  Overflow  => Overflow,
+                  Zero      => Zero,
+                  Seven_Seg => Seven_Seg,
+                  AN        => AN);
 
     Clk <= not Clk after CLK_PERIOD / 2;
 
     process begin
-        -- Hold reset for two slow_clk periods (2 * 4 * 10 ns = 80 ns)
-        -- to guarantee at least one rising slow_clk edge with Clr='1'.
-        Clr <= '1';
-        wait for 100 ns;
+        -- Hold reset for 2 full slow_clk periods (160 ns) to ensure
+        -- at least one rising slow_clk edge sees Clr='1'.
+        Clr <= '1'; wait for 160 ns;
         Clr <= '0';
 
-        -- Wait for the countdown loop to complete (14 instructions × 80 ns)
-        -- plus margin. Program halts at JZR R0, 7 by ~1250 ns.
+        -- Wait for countdown loop to complete with margin
         wait for 3000 ns;
 
-        -- ── Final state assertions ────────────────────────────────────
-        -- R7 = 3+2+1 = 6 → "0110"
+        -- R7 = 3+2+1 = 6
         assert R = "0110"
-            report "FAIL: Expected R=0110 (6), got " & integer'image(to_integer(unsigned(R)))
+            report "FAIL: R7 expected 0110 (6), got " &
+                   integer'image(to_integer(unsigned(R)))
             severity error;
 
-        -- AN drives only the rightmost digit
+        -- Only rightmost 7-seg digit enabled
         assert AN = "1110"
-            report "FAIL: AN should be 1110"
-            severity error;
+            report "FAIL: AN should be 1110" severity error;
 
-        -- 7-segment encoding for '6' (active-low, CG,CF,CE,CD,CC,CB,CA)
-        -- 6 → a,f,g,e,d on → CA=0,CB=1,CC=0,CD=0,CE=0,CF=0,CG=0 = "0000010"
+        -- 7-seg for '6': CG=0,CF=0,CE=0,CD=0,CC=0,CB=1,CA=0 = "0000010"
         assert Seven_Seg = "0000010"
-            report "FAIL: Seven_Seg for 6 should be 0000010"
-            severity error;
+            report "FAIL: Seven_Seg for 6 should be 0000010" severity error;
 
         assert false report "TB_Nanoprocessor: ALL TESTS PASSED" severity note;
         wait;
