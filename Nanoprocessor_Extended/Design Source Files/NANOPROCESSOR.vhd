@@ -182,15 +182,16 @@ begin
             B => Decoder_MuxD(2 downto 0),
             S => Decoder_MuxC,
             Q => PC_MuxC);
+
     Adder_3bit_0 : ADDER_3
         Port map (
             A => PC_ROM,
-            Carry => Adder_Cout,
-            Logic_Sel => Decoder_Logic,
-            JMP => Decoder_MuxC);
-    MuxD : MUX_2_1_4B
+            S => Add3_MuxC,
+            Carry => Adder_Cout);
+
+    Decoder : INSTRUCTION_DEC
         Port map (
-            A => Final_Resoder,
+            Inst => ROM_Decoder,
             Reg => MuxA_Adder,
             LSB => Decoder_MuxD,
             Reg_EN => Decoder_RegBank,
@@ -198,10 +199,12 @@ begin
             Mux_B => Decoder_MuxB,
             LD => Decoder_MuxDSelc,
             Sub => Decoder_Adder,
+            Logic_Sel => Decoder_Logic,
             JMP => Decoder_MuxC);
+
     MuxD : MUX_2_1_4B
         Port map (
-            A => MuxD_Adder,
+            A => Final_Res,
             B => Decoder_MuxD,
             S => Decoder_MuxDSelc,
             Q => MuxD_RegBank);
