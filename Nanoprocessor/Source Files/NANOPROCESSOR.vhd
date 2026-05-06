@@ -8,6 +8,7 @@ use IEEE.NUMERIC_STD.ALL;
 -- 3. Component declarations updated for optimized sub-components
 --    (REG_BANK behavioural, INSTRUCTION_DEC with/select, etc.)
 entity NANOPROCESSOR is
+    generic (CLK_DIV_MAX : integer := 50_000_000);
     Port ( Clr       : in  STD_LOGIC;
            Clk       : in  STD_LOGIC;
            R         : out STD_LOGIC_VECTOR (3 downto 0);
@@ -106,8 +107,8 @@ begin
     LUT : LUT_7_SEG
         port map (address => R7_s, data => Seven_Seg);
 
-    Slow_Clk_0 : Slow_Clk
-        generic map (CLK_DIV_MAX => 50_000_000)
+    Slow_Clk_0 : SLOW_CLK
+        generic map (CLK_DIV_MAX => CLK_DIV_MAX)
         port map (Clk_in => Clk, Clk_out => Slw_Clk);
 
     Adder : ADD_SUB_4
