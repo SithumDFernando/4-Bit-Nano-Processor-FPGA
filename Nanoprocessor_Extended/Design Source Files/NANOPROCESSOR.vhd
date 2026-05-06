@@ -51,6 +51,7 @@ architecture Behavioral of NANOPROCESSOR is
                LD : out STD_LOGIC;
                Mux_B : out STD_LOGIC_VECTOR (2 downto 0);
                Sub : out STD_LOGIC;
+               Logic_Sel : out STD_LOGIC;
                JMP : out STD_LOGIC);
     end component;
     component MUX_2_1_4B is
@@ -58,6 +59,11 @@ architecture Behavioral of NANOPROCESSOR is
                B : in STD_LOGIC_VECTOR (3 downto 0);
                S : in STD_LOGIC;
                Q : out STD_LOGIC_VECTOR (3 downto 0));
+    end component;
+    component AND_4 is
+        Port ( A : in STD_LOGIC_VECTOR (3 downto 0);
+               B : in STD_LOGIC_VECTOR (3 downto 0);
+               Y : out STD_LOGIC_VECTOR (3 downto 0));
     end component;
     component MUX_2_1_3B is
         Port ( A : in STD_LOGIC_VECTOR (2 downto 0);
@@ -95,9 +101,9 @@ architecture Behavioral of NANOPROCESSOR is
     signal PC_ROM, Add3_MuxC, PC_MuxC : std_logic_vector(2 downto 0);
     signal ROM_Decoder : std_logic_vector(13 downto 0);
     signal Decoder_MuxD : std_logic_vector(3 downto 0);
-    signal Decoder_MuxC, Decoder_MuxDSelc, Decoder_Adder : std_logic;
+    signal Decoder_MuxC, Decoder_MuxDSelc, Decoder_Adder, Decoder_Logic : std_logic;
     signal Decoder_RegBank, Decoder_MuxA, Decoder_MuxB : std_logic_vector(2 downto 0);
-    signal MuxD_Adder, MuxD_RegBank : std_logic_vector(3 downto 0);
+    signal MuxD_Adder, MuxD_RegBank, Mux_Logic_Res, Final_Res : std_logic_vector(3 downto 0);
     signal R0,R1,R2,R3,R4,R5,R6,R7 : std_logic_vector(3 downto 0);
     signal MuxA_Adder, MuxB_Adder : std_logic_vector(3 downto 0);
     signal Slw_Clk : std_logic;
@@ -121,6 +127,17 @@ begin
             M => Decoder_Adder,
             overflow => overflow,
             S => MuxD_Adder);
+    Logic_Unit : AND_4
+        Port map(
+            A => MuxA_Adder,
+            B => MuxB_Adder,
+            Y => Mux_Logic_Res);
+    Result_Mux : MUX_2_1_4B
+        Port map(
+            A => MuxD_Adder,
+            B => Mux_Logic_Res,
+            S => Decoder_Logic,
+            Q => Final_Res);
     MuxA : MUX_8_1_4B
         Port map (
             R0 => R0,
@@ -169,10 +186,11 @@ begin
         Port map (
             A => PC_ROM,
             Carry => Adder_Cout,
-            S => Add3_MuxC);
-    Instruction_Decoder_0 : INSTRUCTION_DEC
+            Logic_Sel => Decoder_Logic,
+            JMP => Decoder_MuxC);
+    MuxD : MUX_2_1_4B
         Port map (
-            Inst => ROM_Decoder,
+            A => Final_Resoder,
             Reg => MuxA_Adder,
             LSB => Decoder_MuxD,
             Reg_EN => Decoder_RegBank,
