@@ -8,7 +8,8 @@ entity NANOPROCESSOR is
            R : out STD_LOGIC_VECTOR (3 downto 0);
            Overflow : out STD_LOGIC;
            Zero : out STD_LOGIC;
-           Seven_Seg : out std_logic_vector (6 downto 0));
+           Seven_Seg : out std_logic_vector (6 downto 0);
+           an : out STD_LOGIC_VECTOR (3 downto 0));
 end NANOPROCESSOR;
 
 architecture Behavioral of NANOPROCESSOR is
@@ -200,4 +201,6 @@ begin
     R <= R7;
     -- NOR4 is more efficient than 4 NOTs + 3 ANDs for the zero flag
     Zero <= NOT (MuxD_Adder(0) OR MuxD_Adder(1) OR MuxD_Adder(2) OR MuxD_Adder(3));
+    -- Enable only the rightmost 7-seg digit (active-low anodes)
+    an <= "1110";
 end Behavioral;
