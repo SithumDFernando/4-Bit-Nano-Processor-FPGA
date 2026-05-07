@@ -6,7 +6,7 @@ entity TB_Add_Sub_4bit is
 end TB_Add_Sub_4bit;
 
 architecture Behavioral of TB_Add_Sub_4bit is
-COMPONENT Add_Sub_4bit
+COMPONENT ADD_SUB_4
      PORT(  A : in STD_LOGIC_VECTOR (3 downto 0); 
             B : in STD_LOGIC_VECTOR (3 downto 0); 
             S : out STD_LOGIC_VECTOR (3 downto 0);
@@ -19,7 +19,7 @@ SIGNAL A,B,S : std_logic_vector (3 downto 0);
 SIGNAL M, overflow : std_logic;
 
 begin
-UUT: Add_Sub_4bit PORT MAP(
+UUT: ADD_SUB_4 PORT MAP(
     M => M,
     A => A, 
     B=>B,
