@@ -52,6 +52,8 @@ architecture Behavioral of NANOPROCESSOR is
                Mux_B : out STD_LOGIC_VECTOR (2 downto 0);
                Sub : out STD_LOGIC;
                Logic_Sel : out STD_LOGIC;
+               Logic_Op : out STD_LOGIC;
+               Update_Flags : out STD_LOGIC;
                JMP : out STD_LOGIC);
     end component;
     component MUX_2_1_4B is
@@ -59,11 +61,15 @@ architecture Behavioral of NANOPROCESSOR is
                B : in STD_LOGIC_VECTOR (3 downto 0);
                S : in STD_LOGIC;
                Q : out STD_LOGIC_VECTOR (3 downto 0));
-    end component;
-    component AND_4 is
-        Port ( A : in STD_LOGIC_VECTOR (3 downto 0);
-               B : in STD_LOGIC_VECTOR (3 downto 0);
-               Y : out STD_LOGIC_VECTOR (3 downto 0));
+    end component; 
+
+    component D_FFwithEN is
+        Port ( D : in STD_LOGIC;
+               Res : in STD_LOGIC;
+               Clk : in STD_LOGIC;
+               Q : out STD_LOGIC;
+               EN : in std_logic;
+               Qbar : out STD_LOGIC);
     end component;
     component MUX_2_1_3B is
         Port ( A : in STD_LOGIC_VECTOR (2 downto 0);
@@ -102,14 +108,21 @@ architecture Behavioral of NANOPROCESSOR is
     signal ROM_Decoder : std_logic_vector(13 downto 0);
     signal Decoder_MuxD : std_logic_vector(3 downto 0);
     signal Decoder_MuxC, Decoder_MuxDSelc, Decoder_Adder, Decoder_Logic : std_logic;
+    signal Decoder_Logic_Op, Decoder_Update_Flags : std_logic;
     signal Decoder_RegBank, Decoder_MuxA, Decoder_MuxB : std_logic_vector(2 downto 0);
-    signal MuxD_Adder, MuxD_RegBank, Mux_Logic_Res, Final_Res : std_logic_vector(3 downto 0);
+    signal MuxD_Adder, MuxD_RegBank, Mux_AND_Res, Mux_XOR_Res, Mux_Logic_Res, Final_Res : std_logic_vector(3 downto 0);
     signal R0,R1,R2,R3,R4,R5,R6,R7 : std_logic_vector(3 downto 0);
     signal MuxA_Adder, MuxB_Adder : std_logic_vector(3 downto 0);
     signal Slw_Clk : std_logic;
     signal Adder_Cout : std_logic;
+    signal Zero_Internal, Overflow_Internal : std_logic;
     
 begin
+    -- Ensure Mux_AND_Res is always computed (no undefined states)
+    Mux_AND_Res <= MuxA_Adder AND MuxB_Adder;
+    -- Ensure Mux_XOR_Res is always computed (no undefined states)
+    Mux_XOR_Res <= MuxA_Adder XOR MuxB_Adder;
+    
     LUT : LUT_7_SEG
         Port map(
             address => R7,
@@ -125,13 +138,38 @@ begin
             A => MuxA_Adder,
             B => MuxB_Adder,
             M => Decoder_Adder,
-            overflow => overflow,
+            overflow => Overflow_Internal,
             S => MuxD_Adder);
-    Logic_Unit : AND_4
+            
+    Zero_Internal <= (NOT MuxD_Adder(0)) AND (NOT MuxD_Adder(1)) AND (NOT MuxD_Adder(2)) AND (NOT MuxD_Adder(3));
+    
+    Zero_Flag_Reg: D_FFwithEN
         Port map(
-            A => MuxA_Adder,
-            B => MuxB_Adder,
-            Y => Mux_Logic_Res);
+            D => Zero_Internal,
+            Res => Clr,
+            Clk => Slw_Clk,
+            EN => Decoder_Update_Flags,
+            Q => Zero,
+            Qbar => open
+        );
+        
+    Overflow_Flag_Reg: D_FFwithEN
+        Port map(
+            D => Overflow_Internal,
+            Res => Clr,
+            Clk => Slw_Clk,
+            EN => Decoder_Update_Flags,
+            Q => overflow,
+            Qbar => open
+        );
+            
+    Logic_Op_Mux : MUX_2_1_4B
+        Port map(
+            A => Mux_AND_Res,
+            B => Mux_XOR_Res,
+            S => Decoder_Logic_Op,
+            Q => Mux_Logic_Res);
+
     Result_Mux : MUX_2_1_4B
         Port map(
             A => MuxD_Adder,
@@ -200,6 +238,8 @@ begin
             LD => Decoder_MuxDSelc,
             Sub => Decoder_Adder,
             Logic_Sel => Decoder_Logic,
+            Logic_Op => Decoder_Logic_Op,
+            Update_Flags => Decoder_Update_Flags,
             JMP => Decoder_MuxC);
 
     MuxD : MUX_2_1_4B
@@ -219,5 +259,4 @@ begin
             S => PC_ROM,
             Q => ROM_Decoder);
     R <= R7;
-    Zero <= (NOT MuxD_Adder(0)) AND (NOT MuxD_Adder(1)) AND (NOT MuxD_Adder(2)) AND (NOT MuxD_Adder(3));
 end Behavioral;

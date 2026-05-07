@@ -10,9 +10,11 @@ entity INSTRUCTION_DEC is
            Reg_EN : out STD_LOGIC_VECTOR (2 downto 0);
            Mux_A : out STD_LOGIC_VECTOR (2 downto 0);
            LD : out STD_LOGIC;
-           Mux_B : out STD_LOGIC_VECTOR (2 downto 2);
+           Mux_B : out STD_LOGIC_VECTOR (2 downto 0);
            Sub : out STD_LOGIC;
            Logic_Sel : out STD_LOGIC;
+           Logic_Op : out STD_LOGIC;
+           Update_Flags : out STD_LOGIC;
            JMP : out STD_LOGIC);
 end INSTRUCTION_DEC;
 
@@ -24,25 +26,29 @@ begin
     process(Opcode, Inst, Reg)
     begin
         -- Default values (Reset/Idle state)
-        LSB       <= "0000";
-        Reg_EN    <= "000";
-        Mux_A     <= "000";
-        Mux_B     <= "000";
-        LD        <= '0';
-        Sub       <= '0';
-        Logic_Sel <= '0';
-        JMP       <= '0';
+        LSB          <= "0000";
+        Reg_EN       <= "000";
+        Mux_A        <= "000";
+        Mux_B        <= "000";
+        LD           <= '0';
+        Sub          <= '0';
+        Logic_Sel    <= '0';
+        Logic_Op     <= '0';
+        Update_Flags <= '0';
+        JMP          <= '0';
 
         case Opcode is
             when "0000" => -- ADD Ra, Rb
-                Reg_EN <= Inst(9 downto 7);
-                Mux_A  <= Inst(9 downto 7);
-                Mux_B  <= Inst(6 downto 4);
+                Reg_EN       <= Inst(9 downto 7);
+                Mux_A        <= Inst(9 downto 7);
+                Mux_B        <= Inst(6 downto 4);
+                Update_Flags <= '1';
 
             when "0001" => -- NEG Ra
-                Reg_EN <= Inst(9 downto 7);
-                Mux_B  <= Inst(9 downto 7);
-                Sub    <= '1';
+                Reg_EN       <= Inst(9 downto 7);
+                Mux_B        <= Inst(9 downto 7);
+                Sub          <= '1';
+                Update_Flags <= '1';
 
             when "0010" => -- MOVI Ra, Imm
                 LSB    <= Inst(3 downto 0);
@@ -57,16 +63,33 @@ begin
                 end if;
 
             when "0100" => -- SUB Ra, Rb
-                Reg_EN <= Inst(9 downto 7);
-                Mux_A  <= Inst(9 downto 7);
-                Mux_B  <= Inst(6 downto 4);
-                Sub    <= '1';
+                Reg_EN       <= Inst(9 downto 7);
+                Mux_A        <= Inst(9 downto 7);
+                Mux_B        <= Inst(6 downto 4);
+                Sub          <= '1';
+                Update_Flags <= '1';
 
             when "0101" => -- AND Ra, Rb
-                Reg_EN    <= Inst(9 downto 7);
-                Mux_A     <= Inst(9 downto 7);
-                Mux_B     <= Inst(6 downto 4);
-                Logic_Sel <= '1';
+                Reg_EN       <= Inst(9 downto 7);
+                Mux_A        <= Inst(9 downto 7);
+                Mux_B        <= Inst(6 downto 4);
+                Logic_Sel    <= '1';
+                Update_Flags <= '1';
+
+            when "0110" => -- XOR Ra, Rb
+                Reg_EN       <= Inst(9 downto 7);
+                Mux_A        <= Inst(9 downto 7);
+                Mux_B        <= Inst(6 downto 4);
+                Logic_Sel    <= '1';
+                Logic_Op     <= '1'; -- Distinguishes XOR(1) from AND(0)
+                Update_Flags <= '1';
+
+            when "0111" => -- CMP Ra, Rb
+                Mux_A        <= Inst(9 downto 7);
+                Mux_B        <= Inst(6 downto 4);
+                Sub          <= '1';
+                Reg_EN       <= "000"; -- Do not write result
+                Update_Flags <= '1'; -- But update flags (Zero, Overflow)
 
             when others =>
                 null; -- Keep default values
