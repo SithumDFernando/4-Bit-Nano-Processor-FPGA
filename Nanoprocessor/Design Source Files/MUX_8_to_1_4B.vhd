@@ -15,27 +15,16 @@ entity MUX_8_1_4B is
 end MUX_8_1_4B;
 
 architecture Behavioral of MUX_8_1_4B is
-    component DEC_3_8
-        port(
-            I : in std_logic_vector;
-            EN : in std_logic;
-            Y : out std_logic_vector);
-    end component;
-    signal I0 : std_logic_vector (2 downto 0);
-    signal EN0 : std_logic;
-    signal X: std_logic_vector (7 downto 0);
-    
 begin
-    Decoder_3_to_8_0 : DEC_3_8
-        port map(
-            I => I0,
-            EN => EN0,
-            Y => X);
-    EN0 <= '1';
-    I0 <= S;
-    Q(0) <= (R0(0) AND X(0)) OR (R1(0) AND X(1)) OR (R2(0) AND X(2)) OR (R3(0) AND X(3)) OR (R4(0) AND X(4)) OR (R5(0) AND X(5)) OR (R6(0) AND X(6)) OR (R7(0) AND X(7)); 
-    Q(1) <= (R0(1) AND X(0)) OR (R1(1) AND X(1)) OR (R2(1) AND X(2)) OR (R3(1) AND X(3)) OR (R4(1) AND X(4)) OR (R5(1) AND X(5)) OR (R6(1) AND X(6)) OR (R7(1) AND X(7)); 
-    Q(2) <= (R0(2) AND X(0)) OR (R1(2) AND X(1)) OR (R2(2) AND X(2)) OR (R3(2) AND X(3)) OR (R4(2) AND X(4)) OR (R5(2) AND X(5)) OR (R6(2) AND X(6)) OR (R7(2) AND X(7)); 
-    Q(3) <= (R0(3) AND X(0)) OR (R1(3) AND X(1)) OR (R2(3) AND X(2)) OR (R3(3) AND X(3)) OR (R4(3) AND X(4)) OR (R5(3) AND X(5)) OR (R6(3) AND X(6)) OR (R7(3) AND X(7)); 
-      
+    -- Replaced DEC_3_8 + 4x(8 ANDs + 7 ORs) tree with with/select.
+    -- Vivado maps each output bit directly to FPGA MUX primitives (~2 LUT levels).
+    with S select Q <=
+        R0 when "000",
+        R1 when "001",
+        R2 when "010",
+        R3 when "011",
+        R4 when "100",
+        R5 when "101",
+        R6 when "110",
+        R7 when others;
 end Behavioral;

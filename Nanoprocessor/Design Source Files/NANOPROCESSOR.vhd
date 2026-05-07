@@ -198,5 +198,6 @@ begin
             S => PC_ROM,
             Q => ROM_Decoder);
     R <= R7;
-    Zero <= (NOT MuxD_Adder(0)) AND (NOT MuxD_Adder(1)) AND (NOT MuxD_Adder(2)) AND (NOT MuxD_Adder(3));
+    -- NOR4 is more efficient than 4 NOTs + 3 ANDs for the zero flag
+    Zero <= NOT (MuxD_Adder(0) OR MuxD_Adder(1) OR MuxD_Adder(2) OR MuxD_Adder(3));
 end Behavioral;

@@ -9,9 +9,8 @@ entity MUX_2_1_3B is
 end MUX_2_1_3B;
 
 architecture Behavioral of MUX_2_1_3B is
-    
 begin
-    Q(0) <= (A(0) AND NOT(S)) OR (B(0) AND S);
-    Q(1) <= (A(1) AND NOT(S)) OR (B(1) AND S);
-    Q(2) <= (A(2) AND NOT(S)) OR (B(2) AND S);
+    -- Replaced 3x(NOT+AND+AND+OR) bit-slice logic with a single conditional.
+    -- Synthesiser maps to FPGA MUX primitives; eliminates the repeated NOT S inversion.
+    Q <= B when S = '1' else A;
 end Behavioral;

@@ -8,40 +8,11 @@ entity ADDER_3 is
 end ADDER_3;
 
 architecture Behavioral of ADDER_3 is
-    component FA 
-         port ( 
-             A: in std_logic; 
-             B: in std_logic; 
-             C_in: in std_logic; 
-             S: out std_logic; 
-             C_out: out std_logic); 
-         end component; 
-     
-     SIGNAL FA0_S, FA0_C, FA1_S, FA1_C, FA2_S, FA2_C, FA3_S, FA3_C : std_logic;
 begin
-    FA_0 : FA 
-         port map ( 
-             A => A(0), 
-             B => '1', 
-             C_in => '0', -- Set to ground 
-             S => S(0), 
-             C_Out => FA0_C);
-      
-    FA_1 : FA 
-         port map ( 
-             A => A(1), 
-             B => '0',
-             C_in => FA0_C, 
-             S => S(1), 
-             C_Out => FA1_C);
-      
-    FA_2 : FA 
-          port map ( 
-              A => A(2),  
-              B => '0',
-              C_in => FA1_C, 
-              S => S(2),
-              C_out => carry); 
-    
-
+    -- Dedicated +1 incrementer: A XOR 001 through a carry chain.
+    -- Replaces 3 full adders (15 gates) with 5 gates.
+    S(0)  <= NOT A(0);                   -- bit 0 always flips
+    S(1)  <= A(1) XOR A(0);             -- half-adder sum
+    S(2)  <= A(2) XOR (A(1) AND A(0));  -- half-adder sum with carry
+    carry <= A(2) AND A(1) AND A(0);    -- carry out only when all bits were '1'
 end Behavioral;
