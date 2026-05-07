@@ -32,15 +32,15 @@ architecture Behavioral of ROM is
 --               "00110000000011", -- JZR R0, 3   (0011 000 000 0011)
 --               "00110000000111"  -- JZR R0, 7   (0011 000 000 0111)
 
-        -- Program showcasing all 8 supported opcodes across different registers
-        "00100100000011", -- 0: MOVI R2, 3  (0010 010 000 0011) | R2 = 3
-        "00010100000000", -- 1: NEG R2      (0001 010 000 0000) | R2 = -3 (13 in 4-bit)
-        "00000110100000", -- 2: ADD R3, R2  (0000 011 010 0000) | R3 = R3(0) + 13 = 13
-        "01001000100000", -- 3: SUB R4, R2  (0100 100 010 0000) | R4 = R4(0) - 13 = 3
-        "01101011000000", -- 4: XOR R5, R4  (0110 101 100 0000) | R5 = R5(0) XOR 3 = 3
-        "01011010000000", -- 5: AND R5, R0  (0101 101 000 0000) | R5 = 3 AND 0 = 0
-        "01110111000000", -- 6: CMP R3, R4  (0111 011 100 0000) | Compare R3(13) and R4(3) (Updates flags only)
-        "00111010000000"  -- 7: JZR R5, 0   (0011 101 000 0000) | Jump to 0 since R5=0 (Infinite Loop)
+        -- Program showcasing all 8 supported opcodes mutating R7 (visible on 7-segment display)
+        "00101110000111", -- 0: MOVI R7, 7  (0010 111 000 0111) | R7 = 7
+        "00011110000000", -- 1: NEG R7      (0001 111 000 0000) | R7 = -7 (9 in 4-bit)
+        "00001111110000", -- 2: ADD R7, R7  (0000 111 111 0000) | R7 = 9 + 9 = 18 -> 2 in 4-bit
+        "01001110000000", -- 3: SUB R7, R0  (0100 111 000 0000) | R7 = 2 - 0 = 2
+        "01101111110000", -- 4: XOR R7, R7  (0110 111 111 0000) | R7 = 2 XOR 2 = 0
+        "01011110000000", -- 5: AND R7, R0  (0101 111 000 0000) | R7 = 0 AND 0 = 0
+        "01111110000000", -- 6: CMP R7, R0  (0111 111 000 0000) | Compare R7(0) and R0(0) (Updates flags only)
+        "00111110000000"  -- 7: JZR R7, 0   (0011 111 000 0000) | Jump to 0 since R7=0 (Infinite Loop)
               );
 begin
     Q <= ROM(to_integer(unsigned(S)));
