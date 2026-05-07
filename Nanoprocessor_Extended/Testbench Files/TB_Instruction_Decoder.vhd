@@ -9,12 +9,12 @@ architecture Behavioral of TB_Instruction_Decoder is
     component Instruction_Decoder is
         Port (  Inst : in std_logic_vector (13 downto 0);
 --                Clk : in std_logic;
-                Reg : in std_logic_vector;
-                LSB : out std_logic_vector;
-                Reg_EN : out std_logic_vector;
-                Mux_A : out std_logic_vector;
+                Reg : in std_logic_vector (3 downto 0);
+                LSB : out std_logic_vector (3 downto 0);
+                Reg_EN : out std_logic_vector (2 downto 0);
+                Mux_A : out std_logic_vector (2 downto 0);
                 LD : out std_logic;
-                Mux_B : out std_logic_vector;
+                Mux_B : out std_logic_vector (2 downto 0);
                 Sub : out std_logic;
                 Logic_Sel : out std_logic;
                 JMP : out std_logic);

@@ -10,7 +10,7 @@ entity INSTRUCTION_DEC is
            Reg_EN : out STD_LOGIC_VECTOR (2 downto 0);
            Mux_A : out STD_LOGIC_VECTOR (2 downto 0);
            LD : out STD_LOGIC;
-           Mux_B : out STD_LOGIC_VECTOR (2 downto 2);
+           Mux_B : out STD_LOGIC_VECTOR (2 downto 0);
            Sub : out STD_LOGIC;
            Logic_Sel : out STD_LOGIC;
            JMP : out STD_LOGIC);
