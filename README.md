@@ -1,4 +1,4 @@
-# 14-bit Nanoprocessor (Extended)
+# na4-bit Nanoprocessor (Extended)
 
 This project implements an extended 4-bit Nanoprocessor with a 14-bit Instruction Set Architecture (ISA).
 
