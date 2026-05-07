@@ -61,17 +61,8 @@ architecture Behavioral of NANOPROCESSOR is
                B : in STD_LOGIC_VECTOR (3 downto 0);
                S : in STD_LOGIC;
                Q : out STD_LOGIC_VECTOR (3 downto 0));
-    end component;
-    component AND_4 is
-        Port ( A : in STD_LOGIC_VECTOR (3 downto 0);
-               B : in STD_LOGIC_VECTOR (3 downto 0);
-               Y : out STD_LOGIC_VECTOR (3 downto 0));
-    end component;
-    component XOR_4 is
-        Port ( A : in STD_LOGIC_VECTOR (3 downto 0);
-               B : in STD_LOGIC_VECTOR (3 downto 0);
-               Y : out STD_LOGIC_VECTOR (3 downto 0));
-    end component;
+    end component; 
+
     component D_FFwithEN is
         Port ( D : in STD_LOGIC;
                Res : in STD_LOGIC;
@@ -127,6 +118,11 @@ architecture Behavioral of NANOPROCESSOR is
     signal Zero_Internal, Overflow_Internal : std_logic;
     
 begin
+    -- Ensure Mux_AND_Res is always computed (no undefined states)
+    Mux_AND_Res <= MuxA_Adder AND MuxB_Adder;
+    -- Ensure Mux_XOR_Res is always computed (no undefined states)
+    Mux_XOR_Res <= MuxA_Adder XOR MuxB_Adder;
+    
     LUT : LUT_7_SEG
         Port map(
             address => R7,
@@ -166,18 +162,6 @@ begin
             Q => overflow,
             Qbar => open
         );
-
-    Logic_Unit_AND : AND_4
-        Port map(
-            A => MuxA_Adder,
-            B => MuxB_Adder,
-            Y => Mux_AND_Res);
-            
-    Logic_Unit_XOR : XOR_4
-        Port map(
-            A => MuxA_Adder,
-            B => MuxB_Adder,
-            Y => Mux_XOR_Res);
             
     Logic_Op_Mux : MUX_2_1_4B
         Port map(
