@@ -17,10 +17,12 @@ architecture Behavioral of TB_Instruction_Decoder is
                 Mux_B : out std_logic_vector (2 downto 0);
                 Sub : out std_logic;
                 Logic_Sel : out std_logic;
+                Logic_Op : out std_logic;
+                Update_Flags : out std_logic;
                 JMP : out std_logic);
     end component;
     signal Inst : std_logic_vector (13 downto 0);
-    signal LD, Sub, JMP, Logic_Sel : std_logic; 
+    signal LD, Sub, JMP, Logic_Sel, Logic_Op, Update_Flags : std_logic; 
     signal Reg, LSB : std_logic_vector (3 downto 0);
     signal Mux_A, Mux_B, Reg_EN : std_logic_vector (2 downto 0);
 
@@ -35,6 +37,8 @@ begin
         Mux_B => Mux_B,
         Sub => Sub,
         Logic_Sel => Logic_Sel,
+        Logic_Op => Logic_Op,
+        Update_Flags => Update_Flags,
         JMP => JMP);
 
     process
@@ -56,6 +60,10 @@ begin
         Inst <= "01000010100000"; -- SUB R1, R2
         wait for 80ns;
         Inst <= "01010010100000"; -- AND R1, R2
+        wait for 80ns;
+        Inst <= "01100010100000"; -- XOR R1, R2
+        wait for 80ns;
+        Inst <= "01110010100000"; -- CMP R1, R2
         wait;
     end process;
 end Behavioral;
