@@ -9,7 +9,7 @@ entity TB_Register_Bank is
 end TB_Register_Bank;
 
 architecture Behavioral of TB_Register_Bank is
-    component Register_Bank is
+    component REG_BANK is
         Port ( D : in STD_LOGIC_VECTOR ;
                Clk : in STD_LOGIC;
                I : in STD_LOGIC_VECTOR ;
@@ -27,7 +27,7 @@ architecture Behavioral of TB_Register_Bank is
     signal I : STD_LOGIC_VECTOR (2 downto 0);
     signal Clr, Clk : STD_LOGIC;
 begin
-    UUT : Register_Bank 
+    UUT : REG_BANK 
     port map (
        D => D ,
        I => I ,

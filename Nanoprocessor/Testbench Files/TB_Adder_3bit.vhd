@@ -6,7 +6,7 @@ entity TB_Adder_3bit is
 end TB_Adder_3bit;
 
 architecture Behavioral of TB_Adder_3bit is
-COMPONENT Adder_3bit
+COMPONENT ADDER_3
  PORT(  A : IN STD_LOGIC_VECTOR (2 downto 0); 
         S: OUT STD_LOGIC_VECTOR (2 downto 0);
         carry : out STD_LOGIC );
@@ -16,7 +16,7 @@ SIGNAL A : std_logic_vector (2 downto 0);
 SIGNAL S: std_logic_vector (2 downto 0);
 SIGNAL carry : std_logic;
 begin
-UUT: Adder_3bit PORT MAP(
+UUT: ADDER_3 PORT MAP(
     A(0) => A(0), 
     A(1) => A(1), 
     A(2)=> A(2), 

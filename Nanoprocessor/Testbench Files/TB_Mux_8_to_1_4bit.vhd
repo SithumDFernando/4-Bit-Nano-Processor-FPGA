@@ -7,7 +7,7 @@ entity TB_Mux_8_to_1_4bit is
 end TB_Mux_8_to_1_4bit;
 
 architecture Behavioral of TB_Mux_8_to_1_4bit is
-    component Mux_8_to_1_4bit is
+    component MUX_8_1_4B is
         Port ( S : in STD_LOGIC_VECTOR;
                R0 : in STD_LOGIC_VECTOR;
                R1 : in STD_LOGIC_VECTOR;
@@ -23,7 +23,7 @@ architecture Behavioral of TB_Mux_8_to_1_4bit is
     signal Q,R0,R1,R2,R3,R4,R5,R6,R7 : std_logic_vector (3 downto 0);
 
 begin
-    uut: Mux_8_to_1_4bit port map(
+    uut: MUX_8_1_4B port map(
         S => S,
         R0 => R0,
         R1 => R1,

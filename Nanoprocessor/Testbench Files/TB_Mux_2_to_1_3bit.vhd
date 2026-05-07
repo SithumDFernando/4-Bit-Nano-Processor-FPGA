@@ -6,7 +6,7 @@ entity TB_Mux_2_to_1_3bit is
 end TB_Mux_2_to_1_3bit;
 
 architecture Behavioral of TB_Mux_2_to_1_3bit is
-    component Mux_2_to_1_3bit is
+    component MUX_2_1_3B is
         Port (  A : in std_logic_vector;
                 B : in std_logic_vector;
                 s : in std_logic;
@@ -16,7 +16,7 @@ architecture Behavioral of TB_Mux_2_to_1_3bit is
     signal C : std_logic;
     
 begin
-    uut : Mux_2_to_1_3bit port map(
+    uut : MUX_2_1_3B port map(
         A => A,
         B => B,
         s => C,

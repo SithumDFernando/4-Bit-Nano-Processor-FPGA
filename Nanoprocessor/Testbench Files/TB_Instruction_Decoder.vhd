@@ -6,7 +6,7 @@ entity TB_Instruction_Decoder is
 end TB_Instruction_Decoder;
 
 architecture Behavioral of TB_Instruction_Decoder is
-    component Instruction_Decoder is
+    component INSTRUCTION_DEC is
         Port (  Inst : in std_logic_vector;
 --                Clk : in std_logic;
                 Reg : in std_logic_vector;
@@ -24,7 +24,7 @@ architecture Behavioral of TB_Instruction_Decoder is
     signal Mux_A, Mux_B, Reg_EN : std_logic_vector (2 downto 0);
 
 begin
-    uut: Instruction_Decoder port map(
+    uut: INSTRUCTION_DEC port map(
         Inst => Inst,
         Reg => Reg,
         LSB => LSB,

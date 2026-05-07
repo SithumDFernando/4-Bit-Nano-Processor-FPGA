@@ -6,7 +6,7 @@ entity TB_Program_Counter is
 end TB_Program_Counter;
 
 architecture Behavioral of TB_Program_Counter is
-    component Program_Counter is
+    component PC is
         Port (  D : in std_logic_vector;
                 Clr : in std_logic;
                 Clk : in std_logic;
@@ -16,7 +16,7 @@ architecture Behavioral of TB_Program_Counter is
     signal Clr, Clk : std_logic;
 
 begin
-    uut: Program_Counter port map(
+    uut: PC port map(
         D => D,
         Clk => Clk,
         Clr => Clr,

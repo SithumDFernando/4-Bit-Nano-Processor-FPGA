@@ -6,7 +6,7 @@ entity TB_Register_4bit is
 end TB_Register_4bit;
 
 architecture Behavioral of TB_Register_4bit is
-    component Register_4bit is 
+    component REG_4 is 
         Port (
             Clk : in std_logic;
             Val : in std_logic_vector;
@@ -18,7 +18,7 @@ architecture Behavioral of TB_Register_4bit is
     signal Val, Reg_out : std_logic_vector (3 downto 0);
 
 begin
-    uut : Register_4bit
+    uut : REG_4
         Port map (
             Clk => Clk,
             Val => Val,
