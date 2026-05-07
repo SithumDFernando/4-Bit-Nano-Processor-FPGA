@@ -16,34 +16,34 @@ entity INSTRUCTION_DEC is
 end INSTRUCTION_DEC;
 
 architecture Behavioral of INSTRUCTION_DEC is
-    signal sig_move, sig_and, sig_neg, sig_jump : std_logic;
+    -- Only 3 signals needed: sig_move was computed but never consumed, removed.
+    signal sig_neg, sig_jump : std_logic;
 begin
-    -- Decode opcode from bits 11:10
-    sig_move <= (NOT Inst(10)) AND      Inst(11);
-    sig_and  <= (NOT Inst(10)) AND (NOT Inst(11));
-    sig_neg  <=      Inst(10)  AND (NOT Inst(11));
-    sig_jump <=      Inst(10)  AND      Inst(11);
+    -- NEG: opcode 01 (Inst(11)=0, Inst(10)=1)
+    sig_neg  <= Inst(10) AND (NOT Inst(11));
+    -- JZR: opcode 11 (both bits '1')
+    sig_jump <= Inst(10) AND      Inst(11);
 
-    -- LD: '1' for MOVI and JZR (both have Inst(11)='1') — direct wire, no gates
+    -- LD='1' for MOVI(10) and JZR(11): both share Inst(11)='1' — zero gates, direct wire
     LD <= Inst(11);
 
-    -- Sub: '1' only for NEG — wire to existing signal
+    -- Sub='1' only for NEG(01) — wire to sig_neg
     Sub <= sig_neg;
 
-    -- LSB: Inst(3:0) for MOVI/JZR (Inst(11)='1'), else "0000" — 4 AND gates
+    -- LSB = Inst(3:0) when Inst(11)='1' (MOVI or JZR), else block — 4 AND gates
     LSB <= Inst(3 downto 0) when Inst(11) = '1' else "0000";
 
-    -- Reg_EN: Inst(9:7) for all instructions except JZR — 3 AND gates + 1 NOT
+    -- Reg_EN = Inst(9:7) unless JZR (opcode 11 means both bits are '1')
     Reg_EN <= Inst(9 downto 7) when sig_jump = '0' else "000";
 
-    -- Mux_A: Inst(9:7) for ADD and JZR, "000" for MOVI/NEG — 3 AND gates + 1 OR
-    Mux_A <= Inst(9 downto 7) when (sig_and = '1' or sig_jump = '1') else "000";
+    -- Mux_A = Inst(9:7) for ADD(00) and JZR(11): when Inst(11) equals Inst(10) — XNOR
+    Mux_A <= Inst(9 downto 7) when (Inst(11) = Inst(10)) else "000";
 
-    -- Mux_B: Inst(6:4) for ADD, Inst(9:7) for NEG, "000" otherwise — 2-way instead of 4-way
-    Mux_B <= Inst(6 downto 4) when sig_and  = '1' else
-             Inst(9 downto 7) when sig_neg  = '1' else
+    -- Mux_B: ADD(00)→Inst(6:4), NEG(01)→Inst(9:7), else "000"
+    Mux_B <= Inst(6 downto 4) when (Inst(11) = '0' and Inst(10) = '0') else
+             Inst(9 downto 7) when sig_neg = '1' else
              "000";
 
-    -- JMP: '1' only when JZR and tested register is zero
+    -- JMP: JZR opcode AND all register bits zero (NOR4)
     JMP <= sig_jump AND NOT(Reg(0) OR Reg(1) OR Reg(2) OR Reg(3));
 end Behavioral;

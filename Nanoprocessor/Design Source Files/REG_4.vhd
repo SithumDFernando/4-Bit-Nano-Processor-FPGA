@@ -12,42 +12,16 @@ end REG_4;
 architecture Behavioral of REG_4 is
     component D_FFwithEN
         port(
-            D : in std_logic;
-            Res : in std_logic;
-            Clk : in std_logic;
-            Q : out std_logic;
-            EN : in std_logic;
-            Qbar : out std_logic);
+            D   : in  std_logic;
+            Res : in  std_logic;
+            Clk : in  std_logic;
+            EN  : in  std_logic;
+            Q   : out std_logic);
     end component;
-    signal Activate : std_logic;
-
+    -- Removed dead signal 'Activate' (was declared, never driven or read)
 begin
-    D_FF_0 : D_FFwithEN
-        port map(
-            D => Val(0),
-            Res => Clr,
-            Clk => Clk,
-            EN => Sel,
-            Q => Reg_out(0));
-    D_FF_1 : D_FFwithEN
-        port map(
-            D => Val(1),
-            Res => Clr,
-            Clk =>  Clk,
-            EN => Sel,
-            Q => Reg_out(1));
-    D_FF_2 : D_FFwithEN
-        port map(
-            D => Val(2),
-            Res => Clr,
-            Clk =>  Clk,
-            EN => Sel,
-            Q => Reg_out(2));
-    D_FF_3 : D_FFwithEN
-        port map(
-            D => Val(3),
-            Res => Clr,
-            Clk =>  Clk,
-            EN => Sel,
-            Q => Reg_out(3));
+    D_FF_0 : D_FFwithEN port map(D => Val(0), Res => Clr, Clk => Clk, EN => Sel, Q => Reg_out(0));
+    D_FF_1 : D_FFwithEN port map(D => Val(1), Res => Clr, Clk => Clk, EN => Sel, Q => Reg_out(1));
+    D_FF_2 : D_FFwithEN port map(D => Val(2), Res => Clr, Clk => Clk, EN => Sel, Q => Reg_out(2));
+    D_FF_3 : D_FFwithEN port map(D => Val(3), Res => Clr, Clk => Clk, EN => Sel, Q => Reg_out(3));
 end Behavioral;
