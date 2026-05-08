@@ -9,10 +9,10 @@ architecture Behavioral of TB_Register_4bit is
     component REG_4 is 
         Port (
             Clk : in std_logic;
-            Val : in std_logic_vector;
+            Val : in std_logic_vector (3 downto 0);
             Sel : in std_logic;
             Clr : in std_logic;
-            Reg_out : out std_logic_vector);
+            Reg_out : out std_logic_vector (3 downto 0));
     end component;
     signal Clk, Sel, Clr : std_logic;
     signal Val, Reg_out : std_logic_vector (3 downto 0);

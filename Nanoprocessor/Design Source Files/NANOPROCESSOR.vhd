@@ -100,6 +100,9 @@ architecture Behavioral of NANOPROCESSOR is
     signal Decoder_RegBank, Decoder_MuxA, Decoder_MuxB : std_logic_vector(2 downto 0);
     signal MuxD_Adder, MuxD_RegBank : std_logic_vector(3 downto 0);
     signal R0,R1,R2,R3,R4,R5,R6,R7 : std_logic_vector(3 downto 0);
+    -- Prevent synthesis from trimming R7 (drives the R output port -> LEDs)
+    attribute KEEP : string;
+    attribute KEEP of R7 : signal is "TRUE";
     signal MuxA_Adder, MuxB_Adder : std_logic_vector(3 downto 0);
     signal Slw_Clk : std_logic;
     signal Adder_Cout : std_logic;

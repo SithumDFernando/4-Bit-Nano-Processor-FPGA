@@ -1,59 +1,51 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity TB_Add_Sub_4bit is
+
+entity TB_Nanoprocessor is
 --  Port ( );
-end TB_Add_Sub_4bit;
+end TB_Nanoprocessor;
 
-architecture Behavioral of TB_Add_Sub_4bit is
-COMPONENT ADD_SUB_4
-     PORT(  A : in STD_LOGIC_VECTOR (3 downto 0); 
-            B : in STD_LOGIC_VECTOR (3 downto 0); 
-            S : out STD_LOGIC_VECTOR (3 downto 0);
-            M : in STD_LOGIC;
-            overflow : out STD_LOGIC );
-END COMPONENT;
-
-
-SIGNAL A,B,S : std_logic_vector (3 downto 0);
-SIGNAL M, overflow : std_logic;
+architecture Behavioral of TB_Nanoprocessor is
+    component NANOPROCESSOR is
+        Port (
+            Clr : in std_logic;
+            Clk : in std_logic;
+            R : out std_logic_vector(3 downto 0);
+            Overflow : out std_logic;
+            Zero : out std_logic;
+            Seven_Seg : out std_logic_vector(6 downto 0);
+            an : out std_logic_vector(3 downto 0) );
+    end component;
+    signal Clr, Clk, Overflow, Zero : std_logic;
+    signal R : std_logic_vector( 3 downto 0);
+    signal Seven_Seg : std_logic_vector (6 downto 0) ;
+    signal an : std_logic_vector (3 downto 0);
 
 begin
-UUT: ADD_SUB_4 PORT MAP(
-    M => M,
-    A => A, 
-    B=>B,
-    S => S,
-    overflow => overflow
-    );
+    uut : NANOPROCESSOR
+        port map (
+            Clr => Clr,
+            Clk => Clk,
+            R => R,
+            Overflow => Overflow,
+            Zero => Zero,
+            Seven_Seg => Seven_Seg,
+            an => an);
+    process
+    begin
+        Clk <= '0';
+        wait for 5ns;
+        Clk <= '1';
+        wait for 5ns;
+    end process;
+    process
+    begin
+        Clr <= '1';
+        wait for 20ns;
+        Clr <= '0';
+        wait;
+    end process;
 
-process
- begin
-     A <= "0101"; 
-     B <= "1100";
-     M <= '0';
-     
- WAIT FOR 100 ns; -- after 100 ns change inputs
-     A <="0010"; 
-     B <= "1110";
-     M <= '1';
- WAIT FOR 100 ns; --change again
-     A <="1010"; 
-     B <= "1010";
-     M <= '1';
- WAIT FOR 100 ns; --change again
-     A <= "1110"; 
-     B <= "0001";
-     M <= '1';
- WAIT FOR 100 ns;
-     A <= "0110"; 
-     B <= "1010";
-     M <= '1';
- WAIT; -- will wait forever
-end process;
+
 end Behavioral;
-
-
-
-
-

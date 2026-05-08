@@ -7,10 +7,10 @@ end TB_Mux_2_to_1_3bit;
 
 architecture Behavioral of TB_Mux_2_to_1_3bit is
     component MUX_2_1_3B is
-        Port (  A : in std_logic_vector;
-                B : in std_logic_vector;
+        Port (  A : in std_logic_vector (2 downto 0);
+                B : in std_logic_vector (2 downto 0);
                 s : in std_logic;
-                Q : out std_logic_vector);
+                Q : out std_logic_vector (2 downto 0));
     end component;
     signal A,B,Q : std_logic_vector(2 downto 0);
     signal C : std_logic;

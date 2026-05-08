@@ -10,18 +10,18 @@ end TB_Register_Bank;
 
 architecture Behavioral of TB_Register_Bank is
     component REG_BANK is
-        Port ( D : in STD_LOGIC_VECTOR ;
+        Port ( D : in STD_LOGIC_VECTOR (3 downto 0);
                Clk : in STD_LOGIC;
-               I : in STD_LOGIC_VECTOR ;
+               I : in STD_LOGIC_VECTOR (2 downto 0);
                Clr : in STD_LOGIC;
-               R1 : out STD_LOGIC_VECTOR;
-               R2 : out STD_LOGIC_VECTOR ;
-               R3 : out STD_LOGIC_VECTOR ;
-               R4 : out STD_LOGIC_VECTOR ;
-               R5 : out STD_LOGIC_VECTOR ;
-               R6 : out STD_LOGIC_VECTOR ;
-               R7 : out STD_LOGIC_VECTOR ;
-               R0 : out STD_LOGIC_VECTOR );
+               R1 : out STD_LOGIC_VECTOR (3 downto 0);
+               R2 : out STD_LOGIC_VECTOR (3 downto 0);
+               R3 : out STD_LOGIC_VECTOR (3 downto 0);
+               R4 : out STD_LOGIC_VECTOR (3 downto 0);
+               R5 : out STD_LOGIC_VECTOR (3 downto 0);
+               R6 : out STD_LOGIC_VECTOR (3 downto 0);
+               R7 : out STD_LOGIC_VECTOR (3 downto 0);
+               R0 : out STD_LOGIC_VECTOR (3 downto 0));
     end component;
     signal D,R1,R2,R3,R4,R5,R6,R7,R0 : std_logic_vector(3 downto 0);
     signal I : STD_LOGIC_VECTOR (2 downto 0);

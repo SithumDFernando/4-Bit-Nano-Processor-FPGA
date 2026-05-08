@@ -9,8 +9,8 @@ end TB_ROM;
 architecture Behavioral of TB_ROM is
     component ROM is
         Port (
-            S : in std_logic_vector;
-            Q : out std_logic_vector);
+            S : in std_logic_vector(2 downto 0);
+            Q : out std_logic_vector(11 downto 0));
     end component;
     signal S : std_logic_vector(2 downto 0);
     signal Q : std_logic_vector(11 downto 0);

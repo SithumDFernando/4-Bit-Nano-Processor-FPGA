@@ -37,10 +37,10 @@ end TB_Mux_2_to_1_4bit;
 
 architecture Behavioral of TB_Mux_2_to_1_4bit is
     component MUX_2_1_4B is
-        Port (  A : in std_logic_vector;
-                B : in std_logic_vector;
+        Port (  A : in std_logic_vector (3 downto 0);
+                B : in std_logic_vector (3 downto 0);
                 S : in std_logic;
-                Q : out std_logic_vector);
+                Q : out std_logic_vector (3 downto 0));
     end component;
     signal A,B,Q : std_logic_vector(3 downto 0);
     signal C : std_logic;

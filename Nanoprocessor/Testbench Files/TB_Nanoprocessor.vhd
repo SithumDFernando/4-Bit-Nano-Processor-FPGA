@@ -11,11 +11,11 @@ architecture Behavioral of TB_Nanoprocessor is
         Port (
             Clr : in std_logic;
             Clk : in std_logic;
-            R : out std_logic_vector;
+            R : out std_logic_vector(3 downto 0);
             Overflow : out std_logic;
             Zero : out std_logic;
-            Seven_Seg : out std_logic_vector;
-            an : out std_logic_vector );
+            Seven_Seg : out std_logic_vector(6 downto 0);
+            an : out std_logic_vector(3 downto 0) );
     end component;
     signal Clr, Clk, Overflow, Zero : std_logic;
     signal R : std_logic_vector( 3 downto 0);

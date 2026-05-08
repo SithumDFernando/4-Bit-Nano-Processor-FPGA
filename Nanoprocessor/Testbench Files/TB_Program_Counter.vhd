@@ -7,10 +7,10 @@ end TB_Program_Counter;
 
 architecture Behavioral of TB_Program_Counter is
     component PC is
-        Port (  D : in std_logic_vector;
+        Port (  D : in std_logic_vector (2 downto 0);
                 Clr : in std_logic;
                 Clk : in std_logic;
-                Q : out std_logic_vector);
+                Q : out std_logic_vector (2 downto 0));
     end component;
     signal D, Q : std_logic_vector (2 downto 0);
     signal Clr, Clk : std_logic;
